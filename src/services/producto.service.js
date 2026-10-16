@@ -7,7 +7,23 @@ const validarId = (id) => {
     return numero;
 };
 
-const listar = () => productoRepository.findAll();
+// Si llega un nombre, filtra por coincidencia parcial sin distinguir mayúsculas
+const listar = (nombre) => {
+    if (nombre === undefined) return productoRepository.findAll();
+    if (typeof nombre !== 'string' || nombre.trim() === '') {
+        throw new HttpError(400, '"nombre" debe ser un texto no vacío');
+    }
+    return productoRepository.findByNombre(nombre.trim());
+};
+
+const resumen = async () => {
+    const r = await productoRepository.getResumen();
+    return {
+        totalProductos: r.total_productos,
+        stockTotal: r.stock_total,
+        valorInventario: r.valor_inventario,
+    };
+};
 
 const obtenerPorId = async (id) => {
     const producto = await productoRepository.findById(validarId(id));
@@ -32,4 +48,4 @@ const eliminar = async (id) => {
     if (!eliminado) throw new HttpError(404, 'Producto no encontrado');
 };
 
-module.exports = { listar, obtenerPorId, crear, actualizar, eliminar };
+module.exports = { listar, resumen, obtenerPorId, crear, actualizar, eliminar };

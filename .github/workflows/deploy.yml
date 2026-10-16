@@ -1,0 +1,29 @@
+name: Deploy a Render
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: new_environment
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar sintaxis
+        run: find src -name "*.js" -exec node --check {} \;
+
+      # La URL del Deploy Hook de Render está guardada en el environment "new_environment"
+      - name: Desplegar en Render
+        run: curl -fsS -X POST "${{ vars.ENVIRONMEN_VAR1 }}"

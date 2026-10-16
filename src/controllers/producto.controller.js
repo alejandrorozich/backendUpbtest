@@ -5,8 +5,12 @@ const { crearProductoDto, actualizarProductoDto, productoResponseDto } = require
 // por eso no hace falta try/catch aquí
 
 const listar = async (req, res) => {
-    const productos = await productoService.listar();
+    const productos = await productoService.listar(req.query.nombre);
     res.json(productos.map(productoResponseDto));
+};
+
+const resumen = async (req, res) => {
+    res.json(await productoService.resumen());
 };
 
 const obtener = async (req, res) => {
@@ -31,4 +35,4 @@ const eliminar = async (req, res) => {
     res.status(204).send();
 };
 
-module.exports = { listar, obtener, crear, actualizar, eliminar };
+module.exports = { listar, resumen, obtener, crear, actualizar, eliminar };
